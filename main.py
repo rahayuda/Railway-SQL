@@ -1,5 +1,7 @@
 import mysql.connector
 
+print("🚀 Update CRUD v2")
+
 def connect_db():
     return mysql.connector.connect(
         host="shuttle.proxy.rlwy.net",
