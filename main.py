@@ -1,7 +1,5 @@
 import mysql.connector
 
-print("🚀 Update CRUD v2")
-
 def connect_db():
     return mysql.connector.connect(
         host="shuttle.proxy.rlwy.net",
@@ -49,13 +47,9 @@ def delete_user(id):
     cursor.close()
     conn.close()
 
-# ======================
-# 🔁 Contoh penggunaan:
-# ======================
-
 print("👋 Hello from Railway Python with CRUD!")
 
-# create_user("Rahayu", "rahayu@example.com")
-# update_user(1, "Updated Name")
-# delete_user(2)
+create_user("Momotaros", "momotaros@example.com")
+update_user(1, "Updated Name")
+delete_user(2)
 read_users()
