@@ -1,2 +1,2 @@
-==> Starting worker: python main.py
-Hello, Railway! 🚂
+# Railway/main.py
+print("Hello, Railway! 🚂")
