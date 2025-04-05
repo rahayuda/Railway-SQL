@@ -1,5 +1,7 @@
 import mysql.connector
 
+print("👋 Hello from Railway Python!")
+
 # Koneksi ke Railway DB
 conn = mysql.connector.connect(
     host="shuttle.proxy.rlwy.net",
