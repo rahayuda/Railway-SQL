@@ -1,44 +1,9 @@
+from flask import Flask, render_template_string, request, redirect
 import mysql.connector
 
-# Fungsi-fungsi CRUD
-def create_user(name, email):
-    try:
-        cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
-        conn.commit()
-        print("✅ Data user berhasil ditambahkan.")
-    except Exception as e:
-        print(f"❌ Gagal menambahkan data: {e}")
+app = Flask(__name__)
 
-def read_users():
-    try:
-        cursor.execute("SELECT * FROM users")
-        rows = cursor.fetchall()
-        print("\n📋 Isi tabel 'users':")
-        if not rows:
-            print("⚠️ Tabel kosong.")
-        else:
-            for row in rows:
-                print(row)
-    except Exception as e:
-        print(f"❌ Gagal membaca data: {e}")
-
-def update_user(user_id, new_name, new_email):
-    try:
-        cursor.execute("UPDATE users SET name = %s, email = %s WHERE id = %s", (new_name, new_email, user_id))
-        conn.commit()
-        print("✅ Data user berhasil diupdate.")
-    except Exception as e:
-        print(f"❌ Gagal mengupdate data: {e}")
-
-def delete_user(user_id):
-    try:
-        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
-        conn.commit()
-        print("✅ Data user berhasil dihapus.")
-    except Exception as e:
-        print(f"❌ Gagal menghapus data: {e}")
-
-# Koneksi ke DB
+# Koneksi ke MySQL Railway
 conn = mysql.connector.connect(
     host="shuttle.proxy.rlwy.net",
     port=14810,
@@ -48,41 +13,51 @@ conn = mysql.connector.connect(
 )
 cursor = conn.cursor()
 
-print("👋 Selamat datang di Aplikasi CRUD Railway!")
+# Template HTML
+TEMPLATE = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD Railway</title>
+</head>
+<body>
+    <h1>📋 Daftar Users</h1>
+    <ul>
+        {% for user in users %}
+            <li>{{ user[0] }}. {{ user[1] }} ({{ user[2] }}) 
+                <a href="/delete/{{ user[0] }}">Hapus</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <h2>➕ Tambah User</h2>
+    <form method="post" action="/add">
+        Nama: <input type="text" name="name"><br>
+        Email: <input type="text" name="email"><br>
+        <input type="submit" value="Tambah">
+    </form>
+</body>
+</html>
+"""
 
-# Tampilkan semua data diawal
-read_users()
+@app.route('/')
+def index():
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    return render_template_string(TEMPLATE, users=users)
 
-while True:
-    print("\nPilih menu:")
-    print("1. Tambah User")
-    print("2. Update User")
-    print("3. Hapus User")
-    print("4. Keluar")
-    
-    pilihan = input("Masukkan pilihan (1-4): ")
+@app.route('/add', methods=['POST'])
+def add():
+    name = request.form['name']
+    email = request.form['email']
+    cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
+    conn.commit()
+    return redirect('/')
 
-    if pilihan == "1":
-        name = input("Nama: ")
-        email = input("Email: ")
-        create_user(name, email)
-        read_users()  # Tampilkan setelah create
-    elif pilihan == "2":
-        user_id = input("ID user yang ingin diupdate: ")
-        new_name = input("Nama baru: ")
-        new_email = input("Email baru: ")
-        update_user(user_id, new_name, new_email)
-        read_users()  # Tampilkan setelah update
-    elif pilihan == "3":
-        user_id = input("ID user yang ingin dihapus: ")
-        delete_user(user_id)
-        read_users()  # Tampilkan setelah delete
-    elif pilihan == "4":
-        print("👋 Keluar dari aplikasi.")
-        break
-    else:
-        print("❌ Pilihan tidak valid. Silakan coba lagi.")
+@app.route('/delete/<int:user_id>')
+def delete(user_id):
+    cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+    conn.commit()
+    return redirect('/')
 
-# Tutup koneksi
-cursor.close()
-conn.close()
+if __name__ == '__main__':
+    app.run(debug=True)
