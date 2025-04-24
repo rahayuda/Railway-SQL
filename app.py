@@ -5,11 +5,10 @@ import mysql.connector
 app = Flask(__name__)
 CORS(app)
 
-# Fungsi untuk koneksi ke database Railway
 def get_db_connection():
     return mysql.connector.connect(
-        host="shuttle.proxy.rlwy.net",
-        port=14810,  # Sesuaikan dengan Railway
+        host="mysql.railway.internal",
+        port=3306, 
         user="root",
         password="uwJUEiosnJUeLOCkkhBgOgfZAqalBUGx",
         database="railway"
