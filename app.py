@@ -66,7 +66,7 @@ def api_add_user():
     email = data["email"]
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO users (id, name, email) VALUES (%s, %s, %s)", (id, name, email))
+    cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
     conn.commit()
     cursor.close()
     conn.close()
