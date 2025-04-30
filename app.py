@@ -46,7 +46,7 @@ def delete(id):
     conn.close()
     return redirect("/")
 
-# ✅ API ENDPOINT JSON untuk Android
+# ✅ API Endpoin
 @app.route("/api/users", methods=["GET"])
 def api_get_users():
     conn = get_db_connection()
